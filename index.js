@@ -400,3 +400,21 @@ fs.watchFile(file, () => {
     delete require.cache[file]
     require(file)
 })
+
+// Vercel serverless function export
+module.exports = async (req, res) => {
+    // Start the bot if not already running
+    if (!global.botStarted) {
+        global.botStarted = true
+        startXeonBotInc().catch(error => {
+            console.error('Fatal error:', error)
+        })
+    }
+    
+    // Health check endpoint
+    if (req.url === '/health') {
+        return res.status(200).json({ status: 'Bot is running' })
+    }
+    
+    res.status(200).json({ status: 'WhatsApp Bot is active' })
+}
